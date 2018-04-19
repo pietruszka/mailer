@@ -1,3 +1,3 @@
-const EventManagement = require('./src');
+const Mailer = require('./src');
 
-new EventManagement();
+new Mailer();

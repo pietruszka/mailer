@@ -1,8 +1,13 @@
 const {Router} = require('express')
 
+const {
+    createRedirect
+} = require('./controller');
+
 class RedirectRouter {
     constructor() {
         this.router = Router();
+        this.router.post('/api/redirect', createRedirect);
     }
 
     getRouter() {

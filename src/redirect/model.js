@@ -13,7 +13,7 @@ class RedirectModel {
             {
                 name: String,
                 targetMail: String,
-                mailAccount: [mongoose.Schema.Types.ObjectId]
+                mailAccount: mongoose.Schema.Types.ObjectId
             });
     }
 }

@@ -1,39 +1,56 @@
 const User = (require('./../data/db').getConnection()).model('User');
+const bcrypt = require('bcrypt');
 
-const createUser = (req, res) => {
- let {
+
+const createUser = (req, res, next) => {
+  let {
     name,
     email,
     password
   } = req.body;
 
-
-  if (!name || !email || !password) {
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Przekazano niepoprawne dane"
+    User.find({
+        email
       })
-  }
+      .exec()
+      .then(user => {
+        if (user.length >= 1) {
+          return res.status(409).json({
+            message: "Mail exists"
+          });
+        } else {
+          bcrypt.hash(password, 10, (err, hash) => {
+            if (err) {
+              return res.status(500).json({
+                error: err
+              });
+            } else {
+              const user = new User({
+                name,
+                email,
+                password: hash
+              });
+              user
+                .save()
+                .then(result => {
+                  //  console.log(result);
+                  res.status(201).json({
+                    message: "User created"
+                  });
+                })
+                .catch(err => {
+                  console.log(err);
+                  res.status(500).json({
+                    error: err
+                  });
+                });
+            }
+          });
+        }
+      });
+  };
 
-  const _newRegister = new User({
-    name,
-    email,
-    password
 
-  });
-
-  _newRegister.save(result => {
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Poprawnie dodano uzytkownika"
-      })
-  })
-
-};
 
 module.exports = {
   createUser
